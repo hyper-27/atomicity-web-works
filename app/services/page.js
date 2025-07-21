@@ -15,12 +15,14 @@ import {
   // The icons below are not directly used in ServiceCard but are good to have for future use
   // or if you copy-pasted from the home page imports.
   // You can remove them if you want to keep imports minimal, but keeping them doesn't hurt.
-  Rocket, LayoutDashboard, TrendingUp, Megaphone, FileText, DollarSign, Cloud, Handshake
+  Rocket, LayoutDashboard, TrendingUp,Users, Megaphone, FileText,LifeBuoy, DollarSign, Cloud, Handshake
 } from 'lucide-react';
 
 export default function Services() {
   return (
-    <div className="min-h-[calc(100vh-120px)] flex flex-col items-center py-12 px-4 bg-gray-50">
+    
+       <div className="min-h-[calc(100vh-120px)] flex flex-col items-center py-16 px-4 bg-gray-50 font-sans">
+
       <div className="container mx-auto max-w-6xl">
         <h1 className="text-5xl font-extrabold text-gray-900 text-center mb-6">
           Our Comprehensive Digital Solutions
@@ -112,6 +114,44 @@ export default function Services() {
 
         </div> {/* End Service Categories Grid */}
 
+        <section className="mt-20 mb-16 ">
+          <h2 className="text-4xl font-bold text-gray-800 text-center mb-10">Digital Strategy & Design</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Service Card 7: UI/UX Design */}
+            <div className="bg-blue-50 p-6 rounded-lg shadow-sm text-center transform transition-transform duration-300 hover:scale-105 hover:shadow-md">
+              <Users size={48} className="text-blue-600 mx-auto mb-4" />
+              <h3 className="text-2xl font-semibold mb-3">User Experience (UX) Design</h3>
+              <p className="text-gray-700 leading-relaxed text-sm">
+                Crafting intuitive and seamless user journeys that delight your audience and achieve your business objectives.
+              </p>
+            </div>
+            {/* Service Card 8: SEO & Performance */}
+            <div className="bg-green-50 p-6 rounded-lg shadow-sm text-center transform transition-transform duration-300 hover:scale-105 hover:shadow-md">
+              <Search size={48} className="text-green-600 mx-auto mb-4" />
+              <h3 className="text-2xl font-semibold mb-3">SEO & Performance Optimization</h3>
+              <p className="text-gray-700 leading-relaxed text-sm">
+                Improve your search engine rankings and website speed to attract more organic traffic and provide a superior user experience.
+              </p>
+            </div>
+            {/* Service Card 9: AI & Automation */}
+            <div className="bg-purple-50 p-6 rounded-lg shadow-sm text-center transform transition-transform duration-300 hover:scale-105 hover:shadow-md">
+              <Brain size={48} className="text-purple-600 mx-auto mb-4" />
+              <h3 className="text-2xl font-semibold mb-3">AI & Automation Consulting</h3>
+              <p className="text-gray-700 leading-relaxed text-sm">
+                Integrate intelligent automation and AI-powered features to streamline workflows and enhance user engagement.
+              </p>
+            </div>
+            {/* Service Card 10: Website Maintenance */}
+            <div className="bg-indigo-50 p-6 rounded-lg shadow-sm text-center transform transition-transform duration-300 hover:scale-105 hover:shadow-md">
+              <LifeBuoy size={48} className="text-indigo-600 mx-auto mb-4" />
+              <h3 className="text-2xl font-semibold mb-3">Website Maintenance & Support</h3>
+              <p className="text-gray-700 leading-relaxed text-sm">
+                Ongoing support, security updates, and performance monitoring to keep your website running smoothly and securely.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Call to Action */}
         <div className="text-center mt-16">
           <h2 className="text-3xl font-bold text-gray-800 mb-6">Ready to Transform Your Digital Presence?</h2>
@@ -124,6 +164,7 @@ export default function Services() {
         </div>
       </div>
     </div>
+    
   );
 }
 

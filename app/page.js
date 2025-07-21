@@ -6,14 +6,14 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link'; // For navigation links
 
-// Firebase Firestore imports for fetching featured projects
+// Firebase Firestore imports for fetching featured projects and testimonials
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { db, appId } from '@/lib/firebase'; // Ensure db and appId are correctly imported from your firebase config
 
 // Lucide React Icons for visual appeal in various sections
 import {
   Rocket, ShieldCheck, Users, Code, ShoppingCart, Brain,
-  LayoutDashboard, Lightbulb, TrendingUp, Handshake
+  LayoutDashboard, Lightbulb, TrendingUp, Handshake, Star
 } from 'lucide-react'; // Using icons from your previous preferred set
 
 export default function Home() {
@@ -24,6 +24,11 @@ export default function Home() {
   const [featuredProjects, setFeaturedProjects] = useState([]);
   const [loadingFeaturedProjects, setLoadingFeaturedProjects] = useState(true);
   const [featuredProjectsError, setFeaturedProjectsError] = useState('');
+
+  // State variables for managing testimonials data
+  const [testimonials, setTestimonials] = useState([]);
+  const [loadingTestimonials, setLoadingTestimonials] = useState(true);
+  const [testimonialsError, setTestimonialsError] = useState('');
 
   // useEffect hook for Hero section entrance animation
   // This runs once when the component mounts to trigger the animation
@@ -77,6 +82,39 @@ export default function Home() {
     return () => unsubscribe();
   }, [appId, db]); // Dependencies: Re-run this effect if appId or db instance changes
 
+  // useEffect hook to fetch testimonials from Firestore
+  useEffect(() => {
+    setLoadingTestimonials(true);
+    setTestimonialsError('');
+
+    const testimonialsCollectionRef = collection(db, `artifacts/${appId}/public/data/testimonials`);
+    const q = query(
+      testimonialsCollectionRef,
+      where('isApproved', '==', true), // Only show approved testimonials
+      orderBy('createdAt', 'desc')
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) {
+        const fetchedTestimonials = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setTestimonials(fetchedTestimonials);
+      } else {
+        setTestimonials([]);
+      }
+      setLoadingTestimonials(false);
+    }, (err) => {
+      console.error("Error fetching testimonials:", err);
+      setTestimonialsError("Failed to load testimonials. Please check your internet connection or Firebase permissions.");
+      setTestimonials([]);
+      setLoadingTestimonials(false);
+    });
+
+    return () => unsubscribe();
+  }, [appId, db]);
+
   return (
     // Main container for the homepage content.
     // flex flex-col: Makes it a flex container and stacks children vertically.
@@ -111,82 +149,9 @@ export default function Home() {
           <p className="text-xl md:text-2xl mb-8 opacity-90 animate-fade-in-up delay-300">
             Crafting Digital Excellence, One Pixel at a Time.
           </p>
-          <Link href="/services" className="px-10 py-4 bg-indigo-600 text-white font-bold rounded-full shadow-lg hover:bg-indigo-700 transition duration-300 transform hover:scale-105 inline-block animate-fade-in-up delay-600">
-            Explore Our Services
+          <Link href="/contact" className="px-10 py-4 bg-indigo-600 text-white font-bold rounded-full shadow-lg hover:bg-indigo-700 transition duration-300 transform hover:scale-105 inline-block animate-fade-in-up delay-600">
+            Get a Free Consultation
           </Link>
-        </div>
-      </section>
-
-      {/* Featured Projects Section: Displays projects marked as 'featured' in Firestore */}
-      <section className="py-16 px-4 bg-white flex-shrink-0">
-        <div className="container mx-auto max-w-6xl text-center">
-          <h2 className="text-4xl font-extrabold text-gray-900 mb-6">
-            Our Featured Work
-          </h2>
-          <p className="text-xl text-gray-700 mb-12 max-w-3xl mx-auto">
-            Discover some of our most impactful projects that showcase our innovative solutions and design excellence.
-          </p>
-
-          {/* Display error message if fetching featured projects failed */}
-          {featuredProjectsError && (
-            <p className="bg-red-100 text-red-700 p-3 rounded-md mb-4 text-center">
-              {featuredProjectsError}
-            </p>
-          )}
-
-          {/* Conditional rendering based on loading state and number of featured projects */}
-          {loadingFeaturedProjects ? (
-            <p className="text-center text-gray-600 text-lg">Loading featured projects...</p>
-          ) : featuredProjects.length === 0 ? (
-            <p className="text-center text-gray-600 text-lg">No featured projects to display yet. Use the admin panel to mark some projects as featured!</p>
-          ) : (
-            // Grid layout for displaying featured project cards
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredProjects.map(project => (
-                // Each project card
-                <div key={project.id} className="bg-gray-50 rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
-                  {project.imageUrl && (
-                    // Next.js Image component for optimized image display
-                    <Image
-                      src={project.imageUrl}
-                      alt={project.title}
-                      width={600} // Base width for image optimization
-                      height={400} // Base height for image optimization
-                      className="w-full h-48 object-cover" // Tailwind classes for responsive sizing and aspect ratio
-                      // onError: Fallback for broken image URLs
-                      onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/cccccc/000000?text=Image+Error"; }}
-                    />
-                  )}
-                  <div className="p-6 text-left">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{project.title}</h3>
-                    {/* line-clamp-3: Limits description to 3 lines for consistent card height */}
-                    <p className="text-gray-700 text-sm mb-3 line-clamp-3">{project.description}</p>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {project.technologies && project.technologies.map((tech, idx) => (
-                        <span key={idx} className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                    <p className="text-gray-600 text-xs mb-2"><strong>Client:</strong> {project.clientName}</p>
-                    {/* Link to the main projects page (can be updated to individual project pages later) */}
-                    <Link
-                      href={`/projects/${project.id}`} 
-                      className="text-indigo-600 hover:underline text-sm font-semibold mt-4 inline-block"
-                    >
-                      Learn More &rarr;
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          {/* Button to view all projects */}
-          <div className="mt-12">
-            <Link href="/projects" className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 transform hover:scale-105 inline-block">
-              View All Projects
-            </Link>
-          </div>
         </div>
       </section>
 
@@ -266,6 +231,131 @@ export default function Home() {
               View All Our Services
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* Featured Projects Section: Displays projects marked as 'featured' in Firestore */}
+      <section className="py-16 px-4 bg-white flex-shrink-0">
+        <div className="container mx-auto max-w-6xl text-center">
+          <h2 className="text-4xl font-extrabold text-gray-900 mb-6">
+            Our Featured Work
+          </h2>
+          <p className="text-xl text-gray-700 mb-12 max-w-3xl mx-auto">
+            Discover some of our most impactful projects that showcase our innovative solutions and design excellence.
+          </p>
+
+          {/* Display error message if fetching featured projects failed */}
+          {featuredProjectsError && (
+            <p className="bg-red-100 text-red-700 p-3 rounded-md mb-4 text-center">
+              {featuredProjectsError}
+            </p>
+          )}
+
+          {/* Conditional rendering based on loading state and number of featured projects */}
+          {loadingFeaturedProjects ? (
+            // Skeleton Loader for Featured Projects
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-pulse">
+              {Array(3).fill(0).map((_, index) => ( // Display 3 skeleton cards
+                <div key={index} className="bg-gray-100 rounded-lg shadow-md overflow-hidden">
+                  <div className="w-full h-48 bg-gray-200"></div> {/* Image skeleton */}
+                  <div className="p-6">
+                    <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div> {/* Title skeleton */}
+                    <div className="h-4 bg-gray-200 rounded w-full mb-3"></div> {/* Description line 1 */}
+                    <div className="h-4 bg-gray-200 rounded w-5/6 mb-4"></div> {/* Description line 2 */}
+                    <div className="h-4 bg-gray-200 rounded w-1/2"></div> {/* Tech tags skeleton */}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : featuredProjects.length === 0 ? (
+            <p className="text-center text-gray-600 text-lg">No featured projects to display yet. Use the admin panel to mark some projects as featured!</p>
+          ) : (
+            // Grid layout for displaying featured project cards
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {featuredProjects.map(project => (
+                // Each project card
+                <div key={project.id} className="bg-gray-50 rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
+                  {project.imageUrl && (
+                    // Next.js Image component for optimized image display
+                    <Image
+                      src={project.imageUrl}
+                      alt={project.title}
+                      width={600} // Base width for image optimization
+                      height={400} // Base height for image optimization
+                      className="w-full h-48 object-cover" // Tailwind classes for responsive sizing and aspect ratio
+                      // onError: Fallback for broken image URLs
+                      onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/cccccc/000000?text=Image+Error"; }}
+                    />
+                  )}
+                  <div className="p-6 text-left">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{project.title}</h3>
+                    {/* line-clamp-3: Limits description to 3 lines for consistent card height */}
+                    <p className="text-gray-700 text-sm mb-3 line-clamp-3">{project.description}</p>
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {project.technologies && project.technologies.map((tech, idx) => (
+                        <span key={idx} className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                    <p className="text-gray-600 text-xs mb-2"><strong>Client:</strong> {project.clientName}</p>
+                    {/* Link to the main projects page (can be updated to individual project pages later) */}
+                    <Link
+                      href={`/projects/${project.id}`}
+                      className="text-indigo-600 hover:underline text-sm font-semibold mt-4 inline-block"
+                    >
+                      Learn More &rarr;
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          {/* Button to view all projects */}
+          <div className="mt-12">
+            <Link href="/projects" className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 transform hover:scale-105 inline-block">
+              View All Projects
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Snippet Section: Displays approved testimonials from Firestore */}
+      <section className="py-16 px-4 w-full bg-gray-100 text-gray-800">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-bold mb-12">What Our Clients Say</h2>
+
+          {testimonialsError && (
+            <p className="bg-red-100 text-red-700 p-3 rounded-md mb-4 text-center">
+              {testimonialsError}
+            </p>
+          )}
+
+          {loadingTestimonials ? (
+            // Skeleton Loader for Testimonials
+            <div className="bg-gray-100 p-8 rounded-lg shadow-md border-l-4 border-indigo-600 animate-pulse">
+              <div className="h-8 bg-gray-200 rounded w-1/3 mx-auto mb-4"></div> {/* Star icon placeholder */}
+              <div className="h-6 bg-gray-200 rounded w-full mb-3"></div> {/* Quote line 1 */}
+              <div className="h-6 bg-gray-200 rounded w-5/6 mx-auto mb-6"></div> {/* Quote line 2 */}
+              <div className="h-5 bg-gray-200 rounded w-1/4 mx-auto"></div> {/* Client name skeleton */}
+            </div>
+          ) : testimonials.length === 0 ? (
+            <p className="text-center text-gray-600 text-lg">No testimonials to display yet. Encourage your clients to share their feedback!</p>
+          ) : (
+            // Display the first testimonial (or loop for more if desired, with a carousel)
+            <div className="bg-gray-50 p-8 rounded-lg shadow-md border-l-4 border-indigo-600 mb-8">
+              <Star size={32} className="text-yellow-500 mx-auto mb-4" fill="currentColor" />
+              <p className="text-xl italic text-gray-700 mb-6">
+                "{testimonials[0].quote}"
+              </p>
+              <p className="font-semibold text-lg text-gray-900">
+                - {testimonials[0].clientName}{testimonials[0].clientTitle ? `, ${testimonials[0].clientTitle}` : ''}
+              </p>
+            </div>
+          )}
+          <Link href="/testimonials" className="inline-block bg-blue-600 text-white font-bold px-8 py-3 rounded-full shadow-md hover:bg-blue-700 transition duration-300">
+            Read More Testimonials
+          </Link>
         </div>
       </section>
 
