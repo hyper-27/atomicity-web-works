@@ -1,39 +1,45 @@
-'use client';
+"use client";
 // app/services/page.js
 
-
-import Link from 'next/link';
+import Link from "next/link";
 
 // Import Lucide React Icons (UPDATED)
 import {
-  Code,          // Used for Custom Web Development
-  ShoppingCart,  // Used for E-commerce Solutions (this was missing!)
-  Lightbulb,     // Used for UI/UX Design & Branding
-  Search,        // Used for SEO & Digital Marketing
-  Shield,        // Used for Website Maintenance & Support
-  Brain,         // Used for AI & Automation Integration
+  Code, // Used for Custom Web Development
+  ShoppingCart, // Used for E-commerce Solutions (this was missing!)
+  Lightbulb, // Used for UI/UX Design & Branding
+  Search, // Used for SEO & Digital Marketing
+  Shield, // Used for Website Maintenance & Support
+  Brain, // Used for AI & Automation Integration
   // The icons below are not directly used in ServiceCard but are good to have for future use
   // or if you copy-pasted from the home page imports.
   // You can remove them if you want to keep imports minimal, but keeping them doesn't hurt.
-  Rocket, LayoutDashboard, TrendingUp,Users, Megaphone, FileText,LifeBuoy, DollarSign, Cloud, Handshake
-} from 'lucide-react';
+  Rocket,
+  LayoutDashboard,
+  TrendingUp,
+  Users,
+  Megaphone,
+  FileText,
+  LifeBuoy,
+  DollarSign,
+  Cloud,
+  Handshake,
+} from "lucide-react";
 
 export default function Services() {
   return (
-    
-       <div className="min-h-[calc(100vh-120px)] flex flex-col items-center py-16 px-4 bg-gray-50 font-sans">
-
+    <div className="min-h-[calc(100vh-120px)] flex flex-col items-center py-16 px-4 bg-gray-50 font-sans">
       <div className="container mx-auto max-w-6xl">
         <h1 className="text-5xl font-extrabold text-gray-900 text-center mb-6">
           Our Comprehensive Digital Solutions
         </h1>
         <p className="text-xl text-gray-700 text-center mb-12 max-w-3xl mx-auto">
-          Atomicity Web Works offers a full spectrum of services designed to elevate your online presence, streamline operations, and drive measurable business growth.
+          Atomicity Web Works offers a full spectrum of services designed to
+          elevate your online presence, streamline operations, and drive
+          measurable business growth.
         </p>
-
         {/* Service Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
           {/* Category 1: Custom Web Development */}
           <ServiceCard
             icon={<Code size={48} className="text-indigo-600" />}
@@ -43,7 +49,7 @@ export default function Services() {
               "Full-stack Development (Next.js, Node.js, React)",
               "API Development & Integration",
               "Database Design & Optimization",
-              "Scalable Architecture"
+              "Scalable Architecture",
             ]}
           />
 
@@ -56,7 +62,7 @@ export default function Services() {
               "Shopify & WooCommerce Development",
               "Payment Gateway Integration",
               "Inventory & Order Management Systems",
-              "Custom Product Pages"
+              "Custom Product Pages",
             ]}
           />
 
@@ -69,7 +75,7 @@ export default function Services() {
               "Wireframing & Prototyping",
               "Responsive Web Design",
               "Brand Guidelines & Identity",
-              "User Research & Testing"
+              "User Research & Testing",
             ]}
           />
 
@@ -82,7 +88,7 @@ export default function Services() {
               "Search Engine Optimization (SEO)",
               "Content Strategy & Marketing",
               "Social Media Integration",
-              "Analytics & Reporting"
+              "Analytics & Reporting",
             ]}
           />
 
@@ -95,7 +101,7 @@ export default function Services() {
               "Regular Security Audits",
               "Performance Optimization",
               "Content Updates & Backups",
-              "24/7 Technical Support"
+              "24/7 Technical Support",
             ]}
           />
 
@@ -108,63 +114,80 @@ export default function Services() {
               "AI Chatbot Development",
               "Workflow Automation",
               "Data Analysis & Prediction",
-              "Custom AI Model Integration"
+              "Custom AI Model Integration",
             ]}
           />
-
-        </div> {/* End Service Categories Grid */}
-
+        </div>{" "}
+        {/* End Service Categories Grid */}
         <section className="mt-20 mb-16 ">
-          <h2 className="text-4xl font-bold text-gray-800 text-center mb-10">Digital Strategy & Design</h2>
+          <h2 className="text-4xl font-bold text-gray-800 text-center mb-10">
+            Digital Strategy & Design
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Service Card 7: UI/UX Design */}
             <div className="bg-blue-50 p-6 rounded-lg shadow-sm text-center transform transition-transform duration-300 hover:scale-105 hover:shadow-md">
               <Users size={48} className="text-blue-600 mx-auto mb-4" />
-              <h3 className="text-2xl font-semibold mb-3">User Experience (UX) Design</h3>
+              <h3 className="text-2xl font-semibold mb-3">
+                User Experience (UX) Design
+              </h3>
               <p className="text-gray-700 leading-relaxed text-sm">
-                Crafting intuitive and seamless user journeys that delight your audience and achieve your business objectives.
+                Crafting intuitive and seamless user journeys that delight your
+                audience and achieve your business objectives.
               </p>
             </div>
             {/* Service Card 8: SEO & Performance */}
             <div className="bg-green-50 p-6 rounded-lg shadow-sm text-center transform transition-transform duration-300 hover:scale-105 hover:shadow-md">
               <Search size={48} className="text-green-600 mx-auto mb-4" />
-              <h3 className="text-2xl font-semibold mb-3">SEO & Performance Optimization</h3>
+              <h3 className="text-2xl font-semibold mb-3">
+                SEO & Performance Optimization
+              </h3>
               <p className="text-gray-700 leading-relaxed text-sm">
-                Improve your search engine rankings and website speed to attract more organic traffic and provide a superior user experience.
+                Improve your search engine rankings and website speed to attract
+                more organic traffic and provide a superior user experience.
               </p>
             </div>
             {/* Service Card 9: AI & Automation */}
             <div className="bg-purple-50 p-6 rounded-lg shadow-sm text-center transform transition-transform duration-300 hover:scale-105 hover:shadow-md">
               <Brain size={48} className="text-purple-600 mx-auto mb-4" />
-              <h3 className="text-2xl font-semibold mb-3">AI & Automation Consulting</h3>
+              <h3 className="text-2xl font-semibold mb-3">
+                AI & Automation Consulting
+              </h3>
               <p className="text-gray-700 leading-relaxed text-sm">
-                Integrate intelligent automation and AI-powered features to streamline workflows and enhance user engagement.
+                Integrate intelligent automation and AI-powered features to
+                streamline workflows and enhance user engagement.
               </p>
             </div>
             {/* Service Card 10: Website Maintenance */}
             <div className="bg-indigo-50 p-6 rounded-lg shadow-sm text-center transform transition-transform duration-300 hover:scale-105 hover:shadow-md">
               <LifeBuoy size={48} className="text-indigo-600 mx-auto mb-4" />
-              <h3 className="text-2xl font-semibold mb-3">Website Maintenance & Support</h3>
+              <h3 className="text-2xl font-semibold mb-3">
+                Website Maintenance & Support
+              </h3>
               <p className="text-gray-700 leading-relaxed text-sm">
-                Ongoing support, security updates, and performance monitoring to keep your website running smoothly and securely.
+                Ongoing support, security updates, and performance monitoring to
+                keep your website running smoothly and securely.
               </p>
             </div>
           </div>
         </section>
-
         {/* Call to Action */}
         <div className="text-center mt-16">
-          <h2 className="text-3xl font-bold text-gray-800 mb-6">Ready to Transform Your Digital Presence?</h2>
+          <h2 className="text-3xl font-bold text-gray-800 mb-6">
+            Ready to Transform Your Digital Presence?
+          </h2>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-            Each project begins with a deep understanding of your goals. Let's discuss how our expertise can drive your success.
+            Each project begins with a deep understanding of your goals. Let's
+            discuss how our expertise can drive your success.
           </p>
-          <Link href="/contact" className="px-10 py-4 bg-indigo-600 text-white font-bold rounded-full shadow-lg hover:bg-indigo-700 transition duration-300 transform hover:scale-105 inline-block">
+          <Link
+            href="/contact"
+            className="px-10 py-4 bg-indigo-600 text-white font-bold rounded-full shadow-lg hover:bg-indigo-700 transition duration-300 transform hover:scale-105 inline-block"
+          >
             Get a Free Consultation
           </Link>
         </div>
       </div>
     </div>
-    
   );
 }
 
@@ -175,12 +198,19 @@ function ServiceCard({ icon, title, description, features }) {
   return (
     <div className="bg-white p-8 rounded-lg shadow-lg flex flex-col items-center text-center transform hover:scale-105 transition duration-300">
       <div className="mb-6">{icon}</div> {/* Icon for the service */}
-      <h3 className="text-2xl font-semibold text-gray-900 mb-4">{title}</h3> {/* Service title */}
-      <p className="text-gray-700 mb-6 flex-grow">{description}</p> {/* Service description */}
-      <ul className="text-gray-600 space-y-2 text-left w-full"> {/* List of features */}
+      <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+        {title}
+      </h3>{" "}
+      {/* Service title */}
+      <p className="text-gray-700 mb-6 flex-grow">{description}</p>{" "}
+      {/* Service description */}
+      <ul className="text-gray-600 space-y-2 text-left w-full">
+        {" "}
+        {/* List of features */}
         {features.map((feature, index) => (
           <li key={index} className="flex items-start">
-            <span className="text-green-500 mr-2 mt-1">✔</span> {/* Checkmark icon */}
+            <span className="text-green-500 mr-2 mt-1">✔</span>{" "}
+            {/* Checkmark icon */}
             {feature}
           </li>
         ))}

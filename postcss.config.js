@@ -4,7 +4,7 @@
 module.exports = {
   plugins: {
     // THIS IS THE CRUCIAL CHANGE: Use the full package name as a string key
-    '@tailwindcss/postcss': {},
+    "@tailwindcss/postcss": {},
     autoprefixer: {},
   },
 };

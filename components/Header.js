@@ -1,9 +1,9 @@
 // components/Header.js
 
-'use client'; // Header uses Link and Image, so it must be a Client Component
+"use client"; // Header uses Link and Image, so it must be a Client Component
 
-import Link from 'next/link';
-import Image from 'next/image';
+import Link from "next/link";
+import Image from "next/image";
 
 export default function Header() {
   return (
@@ -22,28 +22,52 @@ export default function Header() {
 
         {/* *** UPDATED NAVIGATION LINKS HERE *** */}
         <div>
-          <Link href="/" className="mx-2 hover:text-blue-400 transition duration-300">
+          <Link
+            href="/"
+            className="mx-2 hover:text-blue-400 transition duration-300"
+          >
             Home
           </Link>
-          <Link href="/services" className="mx-2 hover:text-blue-400 transition duration-300">
+          <Link
+            href="/services"
+            className="mx-2 hover:text-blue-400 transition duration-300"
+          >
             Services
           </Link>
-          <Link href="/rates" className="mx-2 hover:text-blue-400 transition duration-300">
+          <Link
+            href="/rates"
+            className="mx-2 hover:text-blue-400 transition duration-300"
+          >
             Rates
           </Link>
-          <Link href="/projects" className="mx-2 hover:text-blue-400 transition duration-300">
+          <Link
+            href="/projects"
+            className="mx-2 hover:text-blue-400 transition duration-300"
+          >
             Projects
           </Link>
-          <Link href="/testimonials" className="mx-2 hover:text-blue-400 transition duration-300">
+          <Link
+            href="/testimonials"
+            className="mx-2 hover:text-blue-400 transition duration-300"
+          >
             Testimonials
           </Link>
-          <Link href="/about" className="mx-2 hover:text-blue-400 transition duration-300">
+          <Link
+            href="/about"
+            className="mx-2 hover:text-blue-400 transition duration-300"
+          >
             About
           </Link>
-          <Link href="/contact" className="mx-2 hover:text-blue-400 transition duration-300">
+          <Link
+            href="/contact"
+            className="mx-2 hover:text-blue-400 transition duration-300"
+          >
             Contact
           </Link>
-          <Link href="/admin" className="mx-2 hover:text-blue-400 transition duration-300">
+          <Link
+            href="/admin"
+            className="mx-2 hover:text-blue-400 transition duration-300"
+          >
             Admin
           </Link>
         </div>

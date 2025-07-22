@@ -1,42 +1,51 @@
 // app/admin/projects/page.js
 
-'use client'; // This directive must be the absolute first line in a Client Component file.
+"use client"; // This directive must be the absolute first line in a Client Component file.
 
-import { useState, useEffect } from 'react';
-import { collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import { db, appId } from '@/lib/firebase';
-import { useRouter } from 'next/navigation';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import Image from 'next/image';
-import { Trash2, Edit } from 'lucide-react';
+import { useState, useEffect } from "react";
+import {
+  collection,
+  addDoc,
+  onSnapshot,
+  query,
+  orderBy,
+  deleteDoc,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
+import { db, appId } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import Image from "next/image";
+import { Trash2, Edit } from "lucide-react";
 
 export default function AdminProjectsPage() {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [projectUrl, setProjectUrl] = useState('');
-  const [technologies, setTechnologies] = useState(''); // Comma-separated string
-  const [clientName, setClientName] = useState('');
-  const [category, setCategory] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [projectUrl, setProjectUrl] = useState("");
+  const [technologies, setTechnologies] = useState(""); // Comma-separated string
+  const [clientName, setClientName] = useState("");
+  const [category, setCategory] = useState("");
   const [isFeatured, setIsFeatured] = useState(false);
 
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [authLoading, setAuthLoading] = useState(true);
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   // State for editing
   const [editingProject, setEditingProject] = useState(null);
-  const [editTitle, setEditTitle] = useState('');
-  const [editDescription, setEditDescription] = useState('');
-  const [editImageUrl, setEditImageUrl] = useState('');
-  const [editProjectUrl, setEditProjectUrl] = useState('');
-  const [editTechnologies, setEditTechnologies] = useState('');
-  const [editClientName, setEditClientName] = useState('');
-  const [editCategory, setEditCategory] = useState('');
+  const [editTitle, setEditTitle] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editImageUrl, setEditImageUrl] = useState("");
+  const [editProjectUrl, setEditProjectUrl] = useState("");
+  const [editTechnologies, setEditTechnologies] = useState("");
+  const [editClientName, setEditClientName] = useState("");
+  const [editCategory, setEditCategory] = useState("");
   const [editIsFeatured, setEditIsFeatured] = useState(false);
 
   const router = useRouter();
@@ -50,7 +59,7 @@ export default function AdminProjectsPage() {
       } else {
         setUser(null);
         setAuthLoading(false);
-        router.push('/admin'); // Redirect to login if not authenticated
+        router.push("/admin"); // Redirect to login if not authenticated
       }
     });
     return () => unsubscribeAuth();
@@ -60,22 +69,29 @@ export default function AdminProjectsPage() {
   useEffect(() => {
     if (!authLoading && user) {
       setLoading(true);
-      const projectsCollectionRef = collection(db, `artifacts/${appId}/public/data/projects`);
-      const q = query(projectsCollectionRef, orderBy('createdAt', 'desc'));
+      const projectsCollectionRef = collection(
+        db,
+        `artifacts/${appId}/public/data/projects`,
+      );
+      const q = query(projectsCollectionRef, orderBy("createdAt", "desc"));
 
-      const unsubscribeSnapshot = onSnapshot(q, (snapshot) => {
-        const fetchedProjects = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setProjects(fetchedProjects);
-        setLoading(false);
-        setError('');
-      }, (err) => {
-        console.error("Error fetching projects:", err);
-        setError("Failed to load projects. Please check permissions.");
-        setLoading(false);
-      });
+      const unsubscribeSnapshot = onSnapshot(
+        q,
+        (snapshot) => {
+          const fetchedProjects = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setProjects(fetchedProjects);
+          setLoading(false);
+          setError("");
+        },
+        (err) => {
+          console.error("Error fetching projects:", err);
+          setError("Failed to load projects. Please check permissions.");
+          setLoading(false);
+        },
+      );
 
       return () => unsubscribeSnapshot();
     }
@@ -84,39 +100,52 @@ export default function AdminProjectsPage() {
   // Handle adding a new project
   const handleAddProject = async (e) => {
     e.preventDefault();
-    setError('');
-    setMessage('');
+    setError("");
+    setMessage("");
 
-    if (!title || !description || !imageUrl || !clientName || !category || !technologies) {
-      setError('Please fill in all required fields.');
+    if (
+      !title ||
+      !description ||
+      !imageUrl ||
+      !clientName ||
+      !category ||
+      !technologies
+    ) {
+      setError("Please fill in all required fields.");
       return;
     }
 
     try {
-      const projectsCollectionRef = collection(db, `artifacts/${appId}/public/data/projects`);
+      const projectsCollectionRef = collection(
+        db,
+        `artifacts/${appId}/public/data/projects`,
+      );
       await addDoc(projectsCollectionRef, {
         title,
         description,
         imageUrl,
         projectUrl: projectUrl || null, // Store null if empty
-        technologies: technologies.split(',').map(tech => tech.trim()).filter(tech => tech), // Convert string to array
+        technologies: technologies
+          .split(",")
+          .map((tech) => tech.trim())
+          .filter((tech) => tech), // Convert string to array
         clientName,
         category,
         isFeatured,
         createdAt: new Date(), // Add timestamp
       });
-      setMessage('Project added successfully!');
+      setMessage("Project added successfully!");
       // Clear form
-      setTitle('');
-      setDescription('');
-      setImageUrl('');
-      setProjectUrl('');
-      setTechnologies('');
-      setClientName('');
-      setCategory('');
+      setTitle("");
+      setDescription("");
+      setImageUrl("");
+      setProjectUrl("");
+      setTechnologies("");
+      setClientName("");
+      setCategory("");
       setIsFeatured(false);
     } catch (err) {
-      console.error('Error adding project:', err);
+      console.error("Error adding project:", err);
       setError(`Failed to add project: ${err.message}`);
     }
   };
@@ -127,37 +156,53 @@ export default function AdminProjectsPage() {
     // Populate the edit form fields with the project's current data
     setEditTitle(project.title);
     setEditDescription(project.description);
-    setEditImageUrl(project.imageUrl || '');
-    setEditProjectUrl(project.projectUrl || '');
-    setEditTechnologies(project.technologies ? project.technologies.join(', ') : ''); // Convert array to string
+    setEditImageUrl(project.imageUrl || "");
+    setEditProjectUrl(project.projectUrl || "");
+    setEditTechnologies(
+      project.technologies ? project.technologies.join(", ") : "",
+    ); // Convert array to string
     setEditClientName(project.clientName);
     setEditCategory(project.category);
     setEditIsFeatured(project.isFeatured || false);
-    setMessage(''); // Clear any previous messages
-    setError(''); // Clear any previous errors
+    setMessage(""); // Clear any previous messages
+    setError(""); // Clear any previous errors
   };
 
   // Function to save edited project
   const handleSaveEdit = async (e) => {
     e.preventDefault();
-    setError('');
-    setMessage('');
+    setError("");
+    setMessage("");
     if (!editingProject) return; // Should not happen if edit form is visible
 
     // Basic validation
-    if (!editTitle || !editDescription || !editImageUrl || !editClientName || !editCategory || !editTechnologies) {
-      setError('Please fill in all required fields for editing.');
+    if (
+      !editTitle ||
+      !editDescription ||
+      !editImageUrl ||
+      !editClientName ||
+      !editCategory ||
+      !editTechnologies
+    ) {
+      setError("Please fill in all required fields for editing.");
       return;
     }
 
     try {
-      const projectDocRef = doc(db, `artifacts/${appId}/public/data/projects`, editingProject.id);
+      const projectDocRef = doc(
+        db,
+        `artifacts/${appId}/public/data/projects`,
+        editingProject.id,
+      );
       const updatedData = {
         title: editTitle,
         description: editDescription,
         imageUrl: editImageUrl,
         projectUrl: editProjectUrl || null,
-        technologies: editTechnologies.split(',').map(tech => tech.trim()).filter(tech => tech),
+        technologies: editTechnologies
+          .split(",")
+          .map((tech) => tech.trim())
+          .filter((tech) => tech),
         clientName: editClientName,
         category: editCategory,
         isFeatured: editIsFeatured,
@@ -165,10 +210,10 @@ export default function AdminProjectsPage() {
       };
 
       await updateDoc(projectDocRef, updatedData); // Update the document in Firestore
-      setMessage('Project updated successfully!');
+      setMessage("Project updated successfully!");
       setEditingProject(null); // Exit edit mode
     } catch (err) {
-      console.error('Error updating project:', err);
+      console.error("Error updating project:", err);
       setError(`Failed to update project: ${err.message}`);
     }
   };
@@ -176,25 +221,33 @@ export default function AdminProjectsPage() {
   // Function to cancel editing
   const handleCancelEdit = () => {
     setEditingProject(null); // Exit edit mode
-    setError('');
-    setMessage('');
+    setError("");
+    setMessage("");
   };
 
   // Function to delete a project
   const handleDeleteProject = async (id) => {
-      if (!confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-          return; // User cancelled
-      }
-      setError('');
-      setMessage('');
-      try {
-          const projectDocRef = doc(db, `artifacts/${appId}/public/data/projects`, id);
-          await deleteDoc(projectDocRef); // Delete the document from Firestore
-          setMessage('Project deleted successfully!');
-      } catch (err) {
-          console.error('Error deleting project:', err);
-          setError(`Failed to delete project: ${err.message}`);
-      }
+    if (
+      !confirm(
+        "Are you sure you want to delete this project? This action cannot be undone.",
+      )
+    ) {
+      return; // User cancelled
+    }
+    setError("");
+    setMessage("");
+    try {
+      const projectDocRef = doc(
+        db,
+        `artifacts/${appId}/public/data/projects`,
+        id,
+      );
+      await deleteDoc(projectDocRef); // Delete the document from Firestore
+      setMessage("Project deleted successfully!");
+    } catch (err) {
+      console.error("Error deleting project:", err);
+      setError(`Failed to delete project: ${err.message}`);
+    }
   };
 
   // If not authenticated, show loading/redirect message
@@ -209,7 +262,9 @@ export default function AdminProjectsPage() {
   return (
     <div className="min-h-[calc(100vh-120px)] flex flex-col items-center py-12 px-4 bg-gray-100">
       <div className="container mx-auto max-w-5xl bg-white p-8 rounded-lg shadow-xl">
-        <h1 className="text-4xl font-bold text-gray-800 text-center mb-8">Manage Projects</h1>
+        <h1 className="text-4xl font-bold text-gray-800 text-center mb-8">
+          Manage Projects
+        </h1>
 
         {message && (
           <p className="bg-green-100 text-green-700 p-3 rounded-md mb-4 text-center">
@@ -226,9 +281,16 @@ export default function AdminProjectsPage() {
         {editingProject ? (
           // --- EDIT PROJECT FORM ---
           <form onSubmit={handleSaveEdit} className="space-y-6 mb-12">
-            <h2 className="text-2xl font-semibold text-gray-800 border-b pb-2 mb-4">Edit Project</h2>
+            <h2 className="text-2xl font-semibold text-gray-800 border-b pb-2 mb-4">
+              Edit Project
+            </h2>
             <div>
-              <label htmlFor="editTitle" className="block text-gray-700 text-sm font-bold mb-2">Title <span className="text-red-500">*</span></label>
+              <label
+                htmlFor="editTitle"
+                className="block text-gray-700 text-sm font-bold mb-2"
+              >
+                Title <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 id="editTitle"
@@ -239,7 +301,12 @@ export default function AdminProjectsPage() {
               />
             </div>
             <div>
-              <label htmlFor="editDescription" className="block text-gray-700 text-sm font-bold mb-2">Description <span className="text-red-500">*</span></label>
+              <label
+                htmlFor="editDescription"
+                className="block text-gray-700 text-sm font-bold mb-2"
+              >
+                Description <span className="text-red-500">*</span>
+              </label>
               <textarea
                 id="editDescription"
                 rows="4"
@@ -250,7 +317,12 @@ export default function AdminProjectsPage() {
               ></textarea>
             </div>
             <div>
-              <label htmlFor="editImageUrl" className="block text-gray-700 text-sm font-bold mb-2">Image URL <span className="text-red-500">*</span></label>
+              <label
+                htmlFor="editImageUrl"
+                className="block text-gray-700 text-sm font-bold mb-2"
+              >
+                Image URL <span className="text-red-500">*</span>
+              </label>
               <input
                 type="url"
                 id="editImageUrl"
@@ -260,10 +332,19 @@ export default function AdminProjectsPage() {
                 onChange={(e) => setEditImageUrl(e.target.value)}
                 required
               />
-              <p className="text-xs text-gray-500 mt-1">Use a placeholder like https://placehold.co/600x400/000000/FFFFFF?text=Project if you don't have a real image yet.</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Use a placeholder like
+                https://placehold.co/600x400/000000/FFFFFF?text=Project if you
+                don't have a real image yet.
+              </p>
             </div>
             <div>
-              <label htmlFor="editProjectUrl" className="block text-gray-700 text-sm font-bold mb-2">Live Project URL (Optional)</label>
+              <label
+                htmlFor="editProjectUrl"
+                className="block text-gray-700 text-sm font-bold mb-2"
+              >
+                Live Project URL (Optional)
+              </label>
               <input
                 type="url"
                 id="editProjectUrl"
@@ -274,7 +355,13 @@ export default function AdminProjectsPage() {
               />
             </div>
             <div>
-              <label htmlFor="editTechnologies" className="block text-gray-700 text-sm font-bold mb-2">Technologies (Comma-separated) <span className="text-red-500">*</span></label>
+              <label
+                htmlFor="editTechnologies"
+                className="block text-gray-700 text-sm font-bold mb-2"
+              >
+                Technologies (Comma-separated){" "}
+                <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 id="editTechnologies"
@@ -284,10 +371,18 @@ export default function AdminProjectsPage() {
                 onChange={(e) => setEditTechnologies(e.target.value)}
                 required
               />
-              <p className="text-xs text-gray-500 mt-1">Separate technologies with commas (e.g., React, Node.js, MongoDB).</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Separate technologies with commas (e.g., React, Node.js,
+                MongoDB).
+              </p>
             </div>
             <div>
-              <label htmlFor="editClientName" className="block text-gray-700 text-sm font-bold mb-2">Client Name <span className="text-red-500">*</span></label>
+              <label
+                htmlFor="editClientName"
+                className="block text-gray-700 text-sm font-bold mb-2"
+              >
+                Client Name <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 id="editClientName"
@@ -298,7 +393,12 @@ export default function AdminProjectsPage() {
               />
             </div>
             <div>
-              <label htmlFor="editCategory" className="block text-gray-700 text-sm font-bold mb-2">Category <span className="text-red-500">*</span></label>
+              <label
+                htmlFor="editCategory"
+                className="block text-gray-700 text-sm font-bold mb-2"
+              >
+                Category <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 id="editCategory"
@@ -317,7 +417,12 @@ export default function AdminProjectsPage() {
                 checked={editIsFeatured}
                 onChange={(e) => setEditIsFeatured(e.target.checked)}
               />
-              <label htmlFor="editIsFeatured" className="text-gray-700 text-sm font-bold">Feature on Homepage</label>
+              <label
+                htmlFor="editIsFeatured"
+                className="text-gray-700 text-sm font-bold"
+              >
+                Feature on Homepage
+              </label>
             </div>
             <div className="flex gap-4">
               <button
@@ -338,9 +443,16 @@ export default function AdminProjectsPage() {
         ) : (
           // --- ADD NEW PROJECT FORM (original form) ---
           <form onSubmit={handleAddProject} className="space-y-6 mb-12">
-            <h2 className="text-2xl font-semibold text-gray-800 border-b pb-2 mb-4">Add New Project</h2>
+            <h2 className="text-2xl font-semibold text-gray-800 border-b pb-2 mb-4">
+              Add New Project
+            </h2>
             <div>
-              <label htmlFor="title" className="block text-gray-700 text-sm font-bold mb-2">Title <span className="text-red-500">*</span></label>
+              <label
+                htmlFor="title"
+                className="block text-gray-700 text-sm font-bold mb-2"
+              >
+                Title <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 id="title"
@@ -351,7 +463,12 @@ export default function AdminProjectsPage() {
               />
             </div>
             <div>
-              <label htmlFor="description" className="block text-gray-700 text-sm font-bold mb-2">Description <span className="text-red-500">*</span></label>
+              <label
+                htmlFor="description"
+                className="block text-gray-700 text-sm font-bold mb-2"
+              >
+                Description <span className="text-red-500">*</span>
+              </label>
               <textarea
                 id="description"
                 rows="4"
@@ -362,7 +479,12 @@ export default function AdminProjectsPage() {
               ></textarea>
             </div>
             <div>
-              <label htmlFor="imageUrl" className="block text-gray-700 text-sm font-bold mb-2">Image URL <span className="text-red-500">*</span></label>
+              <label
+                htmlFor="imageUrl"
+                className="block text-gray-700 text-sm font-bold mb-2"
+              >
+                Image URL <span className="text-red-500">*</span>
+              </label>
               <input
                 type="url"
                 id="imageUrl"
@@ -372,10 +494,19 @@ export default function AdminProjectsPage() {
                 onChange={(e) => setImageUrl(e.target.value)}
                 required
               />
-              <p className="text-xs text-gray-500 mt-1">Use a placeholder like https://placehold.co/600x400/000000/FFFFFF?text=Project if you don't have a real image yet.</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Use a placeholder like
+                https://placehold.co/600x400/000000/FFFFFF?text=Project if you
+                don't have a real image yet.
+              </p>
             </div>
             <div>
-              <label htmlFor="projectUrl" className="block text-gray-700 text-sm font-bold mb-2">Live Project URL (Optional)</label>
+              <label
+                htmlFor="projectUrl"
+                className="block text-gray-700 text-sm font-bold mb-2"
+              >
+                Live Project URL (Optional)
+              </label>
               <input
                 type="url"
                 id="projectUrl"
@@ -386,7 +517,13 @@ export default function AdminProjectsPage() {
               />
             </div>
             <div>
-              <label htmlFor="technologies" className="block text-gray-700 text-sm font-bold mb-2">Technologies (Comma-separated) <span className="text-red-500">*</span></label>
+              <label
+                htmlFor="technologies"
+                className="block text-gray-700 text-sm font-bold mb-2"
+              >
+                Technologies (Comma-separated){" "}
+                <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 id="technologies"
@@ -396,10 +533,18 @@ export default function AdminProjectsPage() {
                 onChange={(e) => setTechnologies(e.target.value)}
                 required
               />
-              <p className="text-xs text-gray-500 mt-1">Separate technologies with commas (e.g., React, Node.js, MongoDB).</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Separate technologies with commas (e.g., React, Node.js,
+                MongoDB).
+              </p>
             </div>
             <div>
-              <label htmlFor="clientName" className="block text-gray-700 text-sm font-bold mb-2">Client Name <span className="text-red-500">*</span></label>
+              <label
+                htmlFor="clientName"
+                className="block text-gray-700 text-sm font-bold mb-2"
+              >
+                Client Name <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 id="clientName"
@@ -410,7 +555,12 @@ export default function AdminProjectsPage() {
               />
             </div>
             <div>
-              <label htmlFor="category" className="block text-gray-700 text-sm font-bold mb-2">Category <span className="text-red-500">*</span></label>
+              <label
+                htmlFor="category"
+                className="block text-gray-700 text-sm font-bold mb-2"
+              >
+                Category <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 id="category"
@@ -429,7 +579,12 @@ export default function AdminProjectsPage() {
                 checked={isFeatured}
                 onChange={(e) => setIsFeatured(e.target.checked)}
               />
-              <label htmlFor="isFeatured" className="text-gray-700 text-sm font-bold">Feature on Homepage</label>
+              <label
+                htmlFor="isFeatured"
+                className="text-gray-700 text-sm font-bold"
+              >
+                Feature on Homepage
+              </label>
             </div>
             <button
               type="submit"
@@ -441,32 +596,59 @@ export default function AdminProjectsPage() {
         )}
 
         {/* List of Existing Projects */}
-        <h2 className="text-2xl font-semibold text-gray-800 border-b pb-2 mb-4 mt-12">Existing Projects</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 border-b pb-2 mb-4 mt-12">
+          Existing Projects
+        </h2>
         {loading ? (
           // SKELETON LOADER FOR ADMIN PROJECTS LISTING
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-pulse">
-            {Array(4).fill(0).map((_, index) => ( // Display 4 skeleton cards
-              <div key={index} className="bg-gray-50 p-6 rounded-lg shadow-md flex flex-col">
-                <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div> {/* Title */}
-                <div className="w-full h-48 bg-gray-200 rounded-md mb-4"></div> {/* Image */}
-                <div className="h-4 bg-gray-200 rounded mb-2"></div> {/* Description line 1 */}
-                <div className="h-4 bg-gray-200 rounded w-5/6 mb-4"></div> {/* Description line 2 */}
-                <div className="h-4 bg-gray-200 rounded w-1/3 mb-2"></div> {/* Client */}
-                <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div> {/* Category */}
-                <div className="flex gap-2 mt-4">
-                  <div className="h-10 w-1/2 bg-gray-200 rounded-md"></div> {/* Edit button */}
-                  <div className="h-10 w-1/2 bg-gray-200 rounded-md"></div> {/* Delete button */}
-                </div>
-              </div>
-            ))}
+            {Array(4)
+              .fill(0)
+              .map(
+                (
+                  _,
+                  index, // Display 4 skeleton cards
+                ) => (
+                  <div
+                    key={index}
+                    className="bg-gray-50 p-6 rounded-lg shadow-md flex flex-col"
+                  >
+                    <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>{" "}
+                    {/* Title */}
+                    <div className="w-full h-48 bg-gray-200 rounded-md mb-4"></div>{" "}
+                    {/* Image */}
+                    <div className="h-4 bg-gray-200 rounded mb-2"></div>{" "}
+                    {/* Description line 1 */}
+                    <div className="h-4 bg-gray-200 rounded w-5/6 mb-4"></div>{" "}
+                    {/* Description line 2 */}
+                    <div className="h-4 bg-gray-200 rounded w-1/3 mb-2"></div>{" "}
+                    {/* Client */}
+                    <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>{" "}
+                    {/* Category */}
+                    <div className="flex gap-2 mt-4">
+                      <div className="h-10 w-1/2 bg-gray-200 rounded-md"></div>{" "}
+                      {/* Edit button */}
+                      <div className="h-10 w-1/2 bg-gray-200 rounded-md"></div>{" "}
+                      {/* Delete button */}
+                    </div>
+                  </div>
+                ),
+              )}
           </div>
         ) : projects.length === 0 ? (
-          <p className="text-center text-gray-600">No projects added yet. Use the form above to add your first project!</p>
+          <p className="text-center text-gray-600">
+            No projects added yet. Use the form above to add your first project!
+          </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {projects.map(project => (
-              <div key={project.id} className="bg-gray-50 p-6 rounded-lg shadow-md flex flex-col">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{project.title}</h3>
+            {projects.map((project) => (
+              <div
+                key={project.id}
+                className="bg-gray-50 p-6 rounded-lg shadow-md flex flex-col"
+              >
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  {project.title}
+                </h3>
                 {project.imageUrl && (
                   <Image
                     src={project.imageUrl}
@@ -474,15 +656,25 @@ export default function AdminProjectsPage() {
                     width={300}
                     height={200}
                     className="rounded-md mb-4 object-cover w-full h-48"
-                    onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/300x200/cccccc/000000?text=Image+Error"; }}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src =
+                        "https://placehold.co/300x200/cccccc/000000?text=Image+Error";
+                    }}
                   />
                 )}
-                <p className="text-gray-700 text-sm mb-2 flex-grow">{project.description}</p>
-                <p className="text-gray-600 text-xs mb-1"><strong>Client:</strong> {project.clientName}</p>
-                <p className="text-gray-600 text-xs mb-1"><strong>Category:</strong> {project.category}</p>
+                <p className="text-gray-700 text-sm mb-2 flex-grow">
+                  {project.description}
+                </p>
+                <p className="text-gray-600 text-xs mb-1">
+                  <strong>Client:</strong> {project.clientName}
+                </p>
+                <p className="text-gray-600 text-xs mb-1">
+                  <strong>Category:</strong> {project.category}
+                </p>
                 {project.technologies && project.technologies.length > 0 && (
                   <p className="text-gray-600 text-xs mb-1">
-                    <strong>Tech:</strong> {project.technologies.join(', ')}
+                    <strong>Tech:</strong> {project.technologies.join(", ")}
                   </p>
                 )}
                 {project.projectUrl && (
@@ -496,7 +688,9 @@ export default function AdminProjectsPage() {
                   </a>
                 )}
                 {project.isFeatured && (
-                  <span className="text-sm font-semibold text-purple-600 mt-2">✨ Featured</span>
+                  <span className="text-sm font-semibold text-purple-600 mt-2">
+                    ✨ Featured
+                  </span>
                 )}
                 <div className="mt-4 flex gap-2">
                   <button
