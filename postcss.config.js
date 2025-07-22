@@ -3,9 +3,8 @@
 // Use CommonJS export syntax for compatibility
 module.exports = {
   plugins: {
-    // Refer to plugins by their package names as strings.
-    // PostCSS and Next.js's build system will handle the actual require.
-    tailwindcss: {},
+    // THIS IS THE CRUCIAL CHANGE: Use the full package name as a string key
+    '@tailwindcss/postcss': {},
     autoprefixer: {},
   },
 };
