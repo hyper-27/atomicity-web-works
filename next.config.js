@@ -1,6 +1,6 @@
 // next.config.js
-// This file uses ES Module syntax (import/export) instead of CommonJS (module.exports)
 
+// Use CommonJS export syntax for compatibility
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -12,10 +12,10 @@ const nextConfig = {
     ],
     // --- CORRECTED SVG SUPPORT ---
     dangerouslyAllowSVG: true,
-    contentDispositionType: 'inline', // <--- CHANGED FROM 'header' to 'inline'
+    contentDispositionType: 'inline',
     // --- END SVG SUPPORT ---
   },
   // You can add other Next.js configurations here if needed later
 };
 
-export default nextConfig;
+module.exports = nextConfig; // Export using CommonJS syntax
